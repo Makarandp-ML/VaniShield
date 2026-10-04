@@ -16,6 +16,7 @@ const navItems = [
   { path: '/app/image', icon: Image, key: 'nav.imageCheck' as const },
   { path: '/app/audio', icon: Mic, key: 'nav.audioCheck' as const },
   { path: '/app/camera', icon: Camera, key: 'nav.liveCapture' as const },
+  { path: '/app/microphone', icon: Mic, key: 'dashboard.liveAudio' as const },
   { path: '/app/link', icon: Link2, key: 'nav.linkCheck' as const },
   { path: '/app/history', icon: History, key: 'nav.history' as const },
   { path: '/app/learn', icon: BookOpen, key: 'nav.learn' as const },

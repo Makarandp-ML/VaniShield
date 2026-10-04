@@ -13,10 +13,10 @@ export function OnboardingPage() {
   const { theme, setTheme, language, setLanguage, t } = useThemeLang();
   const [step, setStep] = useState(0);
   const [prefs, setPrefs] = useState({
-    saveHistory: true,
-    saveUploadedFiles: false,
-    personalizationEnabled: true,
-    analyticsEnabled: false,
+    save_history: true,
+    save_uploaded_files: false,
+    personalization_enabled: true,
+    analytics_enabled: false,
   });
 
   const steps = [
@@ -121,10 +121,10 @@ export function OnboardingPage() {
           {step === 2 && (
             <div className="space-y-4">
               {([
-                { key: 'saveHistory', label: t('privacy.saveHistory'), desc: t('onboarding.saveHistoryDesc'), icon: History },
-                { key: 'saveUploadedFiles', label: t('privacy.saveFiles'), desc: t('onboarding.saveFilesDesc'), icon: FileImage },
-                { key: 'personalizationEnabled', label: t('privacy.personalization'), desc: t('onboarding.personalizationDesc'), icon: Sparkles },
-                { key: 'analyticsEnabled', label: t('privacy.analytics'), desc: t('onboarding.analyticsDesc'), icon: BarChart3 },
+                { key: 'save_history', label: t('privacy.saveHistory'), desc: t('onboarding.saveHistoryDesc'), icon: History },
+                { key: 'save_uploaded_files', label: t('privacy.saveFiles'), desc: t('onboarding.saveFilesDesc'), icon: FileImage },
+                { key: 'personalization_enabled', label: t('privacy.personalization'), desc: t('onboarding.personalizationDesc'), icon: Sparkles },
+                { key: 'analytics_enabled', label: t('privacy.analytics'), desc: t('onboarding.analyticsDesc'), icon: BarChart3 },
               ] as const).map((item) => (
                 <button
                   key={item.key}

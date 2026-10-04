@@ -22,11 +22,11 @@ export function ImageCheckPage() {
 
   const handleFile = useCallback((f: File) => {
     if (!ACCEPTED.includes(f.type)) {
-      setError('Unsupported file type. Please upload JPG, PNG, or WEBP.');
+      setError(t('image.unsupported'));
       return;
     }
     if (f.size > MAX_SIZE) {
-      setError('File too large. Maximum size is 10 MB.');
+      setError(t('image.tooLarge'));
       return;
     }
     setError('');
@@ -108,7 +108,7 @@ export function ImageCheckPage() {
             <Upload size={32} className="text-white" />
           </div>
           <p className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t('image.dragDrop')}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">JPG, PNG, WEBP — max 10 MB</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('image.formats')}</p>
           <div className="flex items-center justify-center gap-3">
             <span className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium">
               {t('image.browse')}
@@ -151,7 +151,7 @@ export function ImageCheckPage() {
             disabled={analyzing}
             className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {analyzing ? 'Analyzing...' : t('image.analyze')}
+            {analyzing ? t('common.analyzing') : t('image.analyze')}
             <ImageIcon size={18} />
           </button>
         </div>
@@ -167,6 +167,7 @@ export function ImageCheckPage() {
           analysisType="image"
           language="en"
           onCheckAgain={handleRemove}
+          imagePreviewUrl={preview ?? undefined}
         />
       )}
     </div>

@@ -85,7 +85,44 @@ export type TranslationKey =
   | 'analytics.totalChecks' | 'analytics.textChecks' | 'analytics.imageChecks'
   | 'analytics.audioChecks' | 'analytics.suspicious' | 'analytics.recentActivity'
   | 'analytics.overTime' | 'analytics.byType' | 'analytics.langDist'
-  | 'analytics.resultDist';
+  | 'analytics.resultDist'
+  | 'result.overallResult' | 'result.aiAuthorship' | 'result.linguisticIndicators'
+  | 'result.factualVerification' | 'result.riskLevel' | 'result.corrections'
+  | 'result.sources' | 'result.technicalAnalysis' | 'result.metadata'
+  | 'result.whyResult' | 'result.audioInfo' | 'result.imageMetadata'
+  | 'result.reverseImageSearch' | 'result.reverseImageNotConnected'
+  | 'result.tryReverseSearch' | 'result.noFactIssues' | 'result.demoNotice'
+  | 'result.confidenceNotAvailable' | 'result.inconclusive' | 'result.evidence'
+  | 'result.limitations' | 'result.whatYouShouldKnow'
+  | 'verdict.INCONCLUSIVE' | 'verdict.LIKELY HUMAN' | 'verdict.LIKELY AI-GENERATED'
+  | 'verdict.MIXED/UNCERTAIN' | 'verdict.VERIFIED' | 'verdict.FACTUALLY SUPPORTED'
+  | 'verdict.FACTUAL CONTRADICTION' | 'verdict.HIGH RISK' | 'verdict.SUSPICIOUS'
+  | 'verdict.LOW RISK' | 'verdict.NEEDS VERIFICATION'
+  | 'risk.LOW' | 'risk.MEDIUM' | 'risk.HIGH' | 'risk.INCONCLUSIVE'
+  | 'fact.FACTUALLY SUPPORTED' | 'fact.FACTUAL CONTRADICTION'
+  | 'fact.NEEDS VERIFICATION' | 'fact.INCONCLUSIVE'
+  | 'mic.title' | 'mic.startRecording' | 'mic.stop' | 'mic.recording'
+  | 'mic.readyToRecord' | 'mic.denied' | 'mic.unavailable' | 'mic.recordAgain'
+  | 'mic.analyze' | 'mic.permission'
+  | 'history.deleteConfirm' | 'history.clearConfirm' | 'history.noResults'
+  | 'history.saved' | 'history.delete' | 'history.view' | 'history.clearAll'
+  | 'privacy.downloadReady' | 'privacy.downloadError' | 'privacy.accountDeleted'
+  | 'privacy.deleteConfirmTitle' | 'settings.saved' | 'settings.profileUpdated'
+  | 'settings.accountInfo' | 'settings.deleteAccountConfirm'
+  | 'learn.misinformationDesc' | 'learn.deepfakeDesc' | 'learn.aiAudioDesc'
+  | 'learn.aiImageDesc' | 'learn.fakeNewsDesc' | 'learn.verifyClaimDesc'
+  | 'learn.recognizeMediaDesc' | 'learn.aiMistakesDesc' | 'learn.confidenceScoresDesc'
+  | 'learn.readMore' | 'about.title' | 'about.description'
+  | 'terms.title' | 'terms.description'
+  | 'privacypolicy.title' | 'privacypolicy.description'
+  | 'common.analyzing' | 'common.checking'
+  | 'audio.desc' | 'audio.formats' | 'audio.unsupported' | 'audio.tooLarge'
+  | 'image.desc' | 'image.formats' | 'image.unsupported' | 'image.tooLarge'
+  | 'camera.desc' | 'camera.ready' | 'camera.readyDesc'
+  | 'link.desc' | 'link.enterUrl' | 'link.invalidUrl' | 'link.emptyUrl' | 'link.basicOnly'
+  | 'landing.what.textDesc' | 'landing.what.imageDesc' | 'landing.what.audioDesc'
+  | 'landing.what.cameraDesc' | 'landing.what.microphoneDesc' | 'landing.what.linksDesc'
+  | 'dashboard.subtitle' | 'text.factualTest'
 
 type TranslationMap = Record<TranslationKey, string>;
 
@@ -276,6 +313,36 @@ const en: TranslationMap = {
   'link.enter': 'Enter a URL to check',
   'link.analyze': 'Analyze Link',
   'link.restricted': 'This website cannot directly inspect this page because of browser/security restrictions.',
+  'common.analyzing': 'Analyzing...',
+  'common.checking': 'Checking...',
+  'audio.desc': 'Check audio for potential synthetic or manipulated speech.',
+  'audio.formats': 'MP3, WAV, M4A, OGG, WEBM — max 25 MB',
+  'audio.unsupported': 'Unsupported file type. Please upload MP3, WAV, M4A, OGG, or WEBM.',
+  'audio.tooLarge': 'File too large. Maximum size is 25 MB.',
+  'image.desc': 'Look for suspicious image manipulation or synthetic signals.',
+  'image.formats': 'JPG, PNG, WEBP — max 10 MB',
+  'image.unsupported': 'Unsupported file type. Please upload JPG, PNG, or WEBP.',
+  'image.tooLarge': 'File too large. Maximum size is 10 MB.',
+  'camera.desc': 'Capture an image using your camera.',
+  'camera.ready': 'Camera is ready',
+  'camera.readyDesc': 'Click below to open your camera and capture an image for analysis.',
+  'link.desc': 'Check supported online content.',
+  'link.enterUrl': 'Please enter a URL to check.',
+  'link.invalidUrl': 'Please enter a valid URL.',
+  'link.emptyUrl': 'Please enter a URL to check.',
+  'link.basicOnly': 'Only basic URL-level checks are performed.',
+  'landing.what.textDesc': 'Check messages, articles and social-media posts.',
+  'landing.what.imageDesc': 'Look for suspicious image manipulation or synthetic signals.',
+  'landing.what.audioDesc': 'Check audio for potential synthetic or manipulated speech.',
+  'landing.what.cameraDesc': 'Capture an image using your camera.',
+  'landing.what.microphoneDesc': 'Record audio using your microphone.',
+  'landing.what.linksDesc': 'Check supported online content.',
+  'landing.how.step1Desc': 'Upload a file or capture with your camera/mic',
+  'landing.how.step2Desc': 'AI analyzes available signals',
+  'landing.how.step3Desc': 'Review the result',
+  'landing.how.step4Desc': 'Verify important information',
+  'dashboard.subtitle': 'Choose a check type to get started.',
+  'text.factualTest': 'Factual Test',
   'analytics.totalChecks': 'Total Checks',
   'analytics.textChecks': 'Text Checks',
   'analytics.imageChecks': 'Image Checks',
@@ -286,6 +353,88 @@ const en: TranslationMap = {
   'analytics.byType': 'Checks by content type',
   'analytics.langDist': 'Language distribution',
   'analytics.resultDist': 'Result distribution',
+  'result.overallResult': 'Overall Result',
+  'result.aiAuthorship': 'AI Writing / Authorship Analysis',
+  'result.linguisticIndicators': 'Linguistic Indicators',
+  'result.factualVerification': 'Factual Verification',
+  'result.riskLevel': 'Risk Level',
+  'result.corrections': 'Corrections',
+  'result.sources': 'Sources / Evidence',
+  'result.technicalAnalysis': 'Technical Analysis',
+  'result.metadata': 'Metadata',
+  'result.whyResult': 'WHY THIS RESULT?',
+  'result.audioInfo': 'Audio Information',
+  'result.imageMetadata': 'Image Metadata',
+  'result.reverseImageSearch': 'Reverse Image / Source Search',
+  'result.reverseImageNotConnected': 'External reverse-image search is not currently connected.',
+  'result.tryReverseSearch': 'Search on Google Images',
+  'result.noFactIssues': 'No factual contradictions detected in the available knowledge base.',
+  'result.demoNotice': 'DEMO — This analysis used the fallback engine, not a real AI model.',
+  'result.confidenceNotAvailable': 'Confidence not available (no trained detector connected)',
+  'result.inconclusive': 'INCONCLUSIVE',
+  'result.evidence': 'Evidence',
+  'result.limitations': 'Limitations',
+  'result.whatYouShouldKnow': 'What You Should Know',
+  'verdict.INCONCLUSIVE': 'Inconclusive',
+  'verdict.LIKELY HUMAN': 'Likely Human-written',
+  'verdict.LIKELY AI-GENERATED': 'Likely AI-Generated',
+  'verdict.MIXED/UNCERTAIN': 'Mixed / Uncertain',
+  'verdict.VERIFIED': 'Verified',
+  'verdict.FACTUALLY SUPPORTED': 'Factually Supported',
+  'verdict.FACTUAL CONTRADICTION': 'Factual Contradiction',
+  'verdict.HIGH RISK': 'High Risk',
+  'verdict.SUSPICIOUS': 'Suspicious',
+  'verdict.LOW RISK': 'Low Risk',
+  'verdict.NEEDS VERIFICATION': 'Needs Verification',
+  'risk.LOW': 'Low Risk',
+  'risk.MEDIUM': 'Medium Risk',
+  'risk.HIGH': 'High Risk',
+  'risk.INCONCLUSIVE': 'Inconclusive',
+  'fact.FACTUALLY SUPPORTED': 'Factually Supported',
+  'fact.FACTUAL CONTRADICTION': 'Factual Contradiction',
+  'fact.NEEDS VERIFICATION': 'Needs Verification',
+  'fact.INCONCLUSIVE': 'Inconclusive',
+  'mic.title': 'Microphone Recording',
+  'mic.startRecording': 'Start Recording',
+  'mic.stop': 'Stop Recording',
+  'mic.recording': 'Recording...',
+  'mic.readyToRecord': 'Ready to record',
+  'mic.denied': 'Microphone permission was denied. Please allow microphone access in your browser settings.',
+  'mic.unavailable': 'No microphone found on this device.',
+  'mic.recordAgain': 'Record Again',
+  'mic.analyze': 'Analyze Recording',
+  'mic.permission': 'Click below to request microphone permission and start recording.',
+  'history.deleteConfirm': 'Delete this analysis record?',
+  'history.clearConfirm': 'Clear all your analysis history? This cannot be undone.',
+  'history.noResults': 'No matching results found.',
+  'history.saved': 'Saved',
+  'history.delete': 'Delete',
+  'history.view': 'View Details',
+  'history.clearAll': 'Clear All History',
+  'privacy.downloadReady': 'Your data export is ready.',
+  'privacy.downloadError': 'Unable to download your data. Please try again.',
+  'privacy.accountDeleted': 'Your account has been deleted.',
+  'privacy.deleteConfirmTitle': 'Delete Account',
+  'settings.saved': 'Settings saved successfully.',
+  'settings.profileUpdated': 'Profile updated successfully.',
+  'settings.accountInfo': 'Account Information',
+  'settings.deleteAccountConfirm': 'Are you sure you want to delete your account? This will permanently remove all your data. This action cannot be undone.',
+  'learn.misinformationDesc': 'Misinformation is false or misleading information shared online. It can spread quickly through social media and cause real-world harm. Always check facts before sharing.',
+  'learn.deepfakeDesc': 'A deepfake is AI-generated audio or video that mimics a real person. It can make someone appear to say or do things they never did. Deepfakes are getting harder to detect.',
+  'learn.aiAudioDesc': 'AI can generate realistic-sounding speech that mimics real people\'s voices. This technology can be used for good (like helping people who lost their voice) but also for fraud and misinformation.',
+  'learn.aiImageDesc': 'AI can create realistic images that look like real photographs. These images can show people, places, or events that never existed. Look for unusual details, strange shadows, or inconsistent lighting.',
+  'learn.fakeNewsDesc': 'Fake news spreads because people share it without checking. Emotional reactions (anger, fear, excitement) make us share faster. Always pause and verify before sharing.',
+  'learn.verifyClaimDesc': 'To verify a claim: 1) Check multiple trusted sources. 2) Look for the original source. 3) Check if fact-checking websites have covered it. 4) Consider who benefits from the claim being believed.',
+  'learn.recognizeMediaDesc': 'To spot manipulated media: look for unusual shadows, mismatched lighting, blurry edges, strange reflections, or text that looks digitally added. For audio, listen for unnatural pauses or robotic tones.',
+  'learn.aiMistakesDesc': 'AI detectors are not 100% accurate. They can give false positives (calling real content fake) and false negatives (missing fake content). Always use AI detection as one signal, not as proof.',
+  'learn.confidenceScoresDesc': 'A confidence score shows how sure the AI is about its prediction. A high score does not mean certainty. If no trained detector is available, the system should return INCONCLUSIVE rather than guessing.',
+  'learn.readMore': 'Learn More',
+  'about.title': 'About VaaniShield AI',
+  'about.description': 'VaaniShield AI is a digital safety platform that helps you check whether content may contain misinformation, manipulated images, or synthetic audio. It is designed for all people, in 10 Indian regional languages, with privacy at its core.',
+  'terms.title': 'Terms of Use',
+  'terms.description': 'VaaniShield AI provides AI-assisted analysis. Results may be incorrect and are not definitive proof. Users should verify important information independently. The system should not be the sole basis for high-impact decisions.',
+  'privacypolicy.title': 'Privacy Policy',
+  'privacypolicy.description': 'VaaniShield AI collects minimal data necessary for the service. Your analysis history is private to your account. You can delete your data at any time. We do not sell your data to third parties.',
 };
 
 const mr: Partial<TranslationMap> = {
@@ -342,6 +491,32 @@ const mr: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'गोपनीयता प्राधान्ये',
   'onboarding.continue': 'पुढे जा',
   'onboarding.finish': 'सुरुवात करा',
+  'result.overallResult': 'एकूण निकाल',
+  'result.aiAuthorship': 'AI लेखक विश्लेषण',
+  'result.factualVerification': 'तथ्यात्मक तपासणी',
+  'result.whyResult': 'हा निकाल का?',
+  'result.evidence': 'पुरावा',
+  'result.limitations': 'मर्यादा',
+  'result.whatYouShouldKnow': 'तुम्हाला काय माहित असावे',
+  'verdict.INCONCLUSIVE': 'निर्धारित करू शकत नाही',
+  'verdict.NEEDS VERIFICATION': 'तपासणी आवश्यक',
+  'verdict.SUSPICIOUS': 'संशयास्पद',
+  'verdict.HIGH RISK': 'उच्च जोखमी',
+  'verdict.LOW RISK': 'कमी जोखमी',
+  'verdict.FACTUAL CONTRADICTION': 'तथ्यात्मक विरोधाभास',
+  'risk.LOW': 'कमी जोखमी',
+  'risk.MEDIUM': 'मध्यम जोखमी',
+  'risk.HIGH': 'उच्च जोखमी',
+  'risk.INCONCLUSIVE': 'निर्धारित करू शकत नाही',
+  'mic.title': 'मायक्रोफोन रेकॉर्डिंग',
+  'mic.startRecording': 'रेकॉर्डिंग सुरू करा',
+  'mic.stop': 'रेकॉर्डिंग थांबवा',
+  'mic.recording': 'रेकॉर्डिंग होत आहे...',
+  'mic.readyToRecord': 'रेकॉर्ड करण्यासाठी सज्ज',
+  'mic.recordAgain': 'पुन्हा रेकॉर्ड करा',
+  'mic.analyze': 'रेकॉर्डिंग विश्लेषण करा',
+  'mic.permission': 'रेकॉर्डिंग सुरू करण्यासाठी मायक्रोफोन परवानगी द्या.',
+  'mic.denied': 'मायक्रोफोन परवानगी नाकारली. कृपया ब्राउझर सेटिंग्जमध्ये परवानगी द्या.',
 };
 
 const hi: Partial<TranslationMap> = {
@@ -398,6 +573,32 @@ const hi: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'गोपनीयता प्राथमिकताएं',
   'onboarding.continue': 'जारी रखें',
   'onboarding.finish': 'शुरू करें',
+  'result.overallResult': 'समग्र परिणाम',
+  'result.aiAuthorship': 'AI लेखन विश्लेषण',
+  'result.factualVerification': 'तथ्यात्मक सत्यापन',
+  'result.whyResult': 'यह परिणाम क्यों?',
+  'result.evidence': 'साक्ष्य',
+  'result.limitations': 'सीमाएं',
+  'result.whatYouShouldKnow': 'आपको क्या जानना चाहिए',
+  'verdict.INCONCLUSIVE': 'निर्धारित नहीं किया जा सकता',
+  'verdict.NEEDS VERIFICATION': 'सत्यापन आवश्यक',
+  'verdict.SUSPICIOUS': 'संदिग्ध',
+  'verdict.HIGH RISK': 'उच्च जोखिम',
+  'verdict.LOW RISK': 'कम जोखिम',
+  'verdict.FACTUAL CONTRADICTION': 'तथ्यात्मक विरोधाभास',
+  'risk.LOW': 'कम जोखिम',
+  'risk.MEDIUM': 'मध्यम जोखिम',
+  'risk.HIGH': 'उच्च जोखिम',
+  'risk.INCONCLUSIVE': 'निर्धारित नहीं किया जा सकता',
+  'mic.title': 'माइक्रोफोन रिकॉर्डिंग',
+  'mic.startRecording': 'रिकॉर्डिंग शुरू करें',
+  'mic.stop': 'रिकॉर्डिंग रोकें',
+  'mic.recording': 'रिकॉर्डिंग हो रही है...',
+  'mic.readyToRecord': 'रिकॉर्ड करने के लिए तैयार',
+  'mic.recordAgain': 'फिर से रिकॉर्ड करें',
+  'mic.analyze': 'रिकॉर्डिंग विश्लेषण करें',
+  'mic.permission': 'रिकॉर्डिंग शुरू करने के लिए माइक्रोफोन अनुमति दें।',
+  'mic.denied': 'माइक्रोफोन अनुमति अस्वीकृत। कृपया ब्राउज़र सेटिंग्स में अनुमति दें।',
 };
 
 const gu: Partial<TranslationMap> = {
@@ -438,6 +639,27 @@ const gu: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'ગોપનીયતા પ્રાધાન્યો',
   'onboarding.continue': 'ચાલુ રાખો',
   'onboarding.finish': 'શરૂ કરો',
+  'result.overallResult': 'સમગ્ર પરિણામ',
+  'result.aiAuthorship': 'AI લેખન વિશ્લેષણ',
+  'result.factualVerification': 'તથ્યાત્મક ચકાસણી',
+  'result.whyResult': 'આ પરિણામ કેમ?',
+  'verdict.INCONCLUSIVE': 'નિર્ધારિત કરી શકાતું નથી',
+  'verdict.NEEDS VERIFICATION': 'ચકાસણી જરૂરી',
+  'verdict.SUSPICIOUS': 'શંકાસ્પદ',
+  'verdict.HIGH RISK': 'ઊંચું જોખમ',
+  'verdict.LOW RISK': 'ઓછું જોખમ',
+  'risk.LOW': 'ઓછું જોખમ',
+  'risk.MEDIUM': 'મધ્યમ જોખમ',
+  'risk.HIGH': 'ઊંચું જોખમ',
+  'mic.title': 'માઇક્રોફોન રેકોર્ડિંગ',
+  'mic.startRecording': 'રેકોર્ડિંગ શરૂ કરો',
+  'mic.stop': 'રેકોર્ડિંગ બંધ કરો',
+  'mic.recording': 'રેકોર્ડિંગ થઈ રહી છે...',
+  'mic.readyToRecord': 'રેકોર્ડ કરવા તૈયાર',
+  'mic.recordAgain': 'ફરી રેકોર્ડ કરો',
+  'mic.analyze': 'રેકોર્ડિંગ વિશ્લેષણ કરો',
+  'mic.permission': 'રેકોર્ડિંગ શરૂ કરવા માઇક્રોફોન પરવાનગી આપો.',
+  'mic.denied': 'માઇક્રોફોન પરવાનગી નકારી. કૃપયા બ્રાઉઝર સેટિંગ્સમાં પરવાનગી આપો.',
 };
 
 const bn: Partial<TranslationMap> = {
@@ -478,6 +700,27 @@ const bn: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'গোপনীয়তা পছন্দ',
   'onboarding.continue': 'এগিয়ে যান',
   'onboarding.finish': 'শুরু করুন',
+  'result.overallResult': 'সামগ্রিক ফলাফল',
+  'result.aiAuthorship': 'AI লেখা বিশ্লেষণ',
+  'result.factualVerification': 'তথ্যভিত্তিক যাচাই',
+  'result.whyResult': 'এই ফলাফল কেন?',
+  'verdict.INCONCLUSIVE': 'নির্ধারণ করা যায়নি',
+  'verdict.NEEDS VERIFICATION': 'যাচাই প্রয়োজন',
+  'verdict.SUSPICIOUS': 'সন্দেহজনক',
+  'verdict.HIGH RISK': 'উচ্চ ঝুঁকি',
+  'verdict.LOW RISK': 'কম ঝুঁকি',
+  'risk.LOW': 'কম ঝুঁকি',
+  'risk.MEDIUM': 'মধ্যম ঝুঁকি',
+  'risk.HIGH': 'উচ্চ ঝুঁকি',
+  'mic.title': 'মাইক্রোফোন রেকর্ডিং',
+  'mic.startRecording': 'রেকর্ডিং শুরু করুন',
+  'mic.stop': 'রেকর্ডিং বন্ধ করুন',
+  'mic.recording': 'রেকর্ডিং হচ্ছে...',
+  'mic.readyToRecord': 'রেকর্ড করতে প্রস্তুত',
+  'mic.recordAgain': 'আবার রেকর্ড করুন',
+  'mic.analyze': 'রেকর্ডিং বিশ্লেষণ করুন',
+  'mic.permission': 'রেকর্ডিং শুরু করতে মাইক্রোফোন অনুমতি দিন।',
+  'mic.denied': 'মাইক্রোফোন অনুমতি অস্বীকৃত। ব্রাউজার সেটিংসে অনুমতি দিন।',
 };
 
 const ta: Partial<TranslationMap> = {
@@ -518,6 +761,27 @@ const ta: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'தனியுரிமை விருப்பத்தேர்வுகள்',
   'onboarding.continue': 'தொடரவும்',
   'onboarding.finish': 'தொடங்கு',
+  'result.overallResult': 'மொத்த முடிவு',
+  'result.aiAuthorship': 'AI எழுத்து பகுப்பாய்வு',
+  'result.factualVerification': 'உண்மை சரிபார்ப்பு',
+  'result.whyResult': 'ஏன் இந்த முடிவு?',
+  'verdict.INCONCLUSIVE': 'நிர்ணயிக்க முடியவில்லை',
+  'verdict.NEEDS VERIFICATION': 'சரிபார்ப்பு தேவை',
+  'verdict.SUSPICIOUS': 'சந்தேகத்திற்குரியது',
+  'verdict.HIGH RISK': 'அதிக ஆபத்து',
+  'verdict.LOW RISK': 'குறைந்த ஆபத்து',
+  'risk.LOW': 'குறைந்த ஆபத்து',
+  'risk.MEDIUM': 'நடுத்தர ஆபத்து',
+  'risk.HIGH': 'அதிக ஆபத்து',
+  'mic.title': 'மைக்ரோஃபோன் பதிவு',
+  'mic.startRecording': 'பதிவைத் தொடங்கு',
+  'mic.stop': 'பதிவை நிறுத்து',
+  'mic.recording': 'பதிவு நடக்கிறது...',
+  'mic.readyToRecord': 'பதிவ தயார்',
+  'mic.recordAgain': 'மீண்டும் பதிவு செய்',
+  'mic.analyze': 'பதிவை பகுப்பாய்வு செய்',
+  'mic.permission': 'பதிவைத் தொடங்க மைக்ரோஃபோன் அனுமதி வழங்கவும்.',
+  'mic.denied': 'மைக்ரோஃபோன் அனுமதி மறுக்கப்பட்டது. உலாவி அமைப்புகளில் அனுமதி வழங்கவும்.',
 };
 
 const te: Partial<TranslationMap> = {
@@ -558,6 +822,27 @@ const te: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'గోప్యతా ప్రాధాన్యాలు',
   'onboarding.continue': 'కొనసాగించు',
   'onboarding.finish': 'ప్రారంభించు',
+  'result.overallResult': 'మొత్తం ఫలితం',
+  'result.aiAuthorship': 'AI రచన విశ్లేషణ',
+  'result.factualVerification': 'వాస్తవ ధ్రువీకరణ',
+  'result.whyResult': 'ఈ ఫలితం ఎందుకు?',
+  'verdict.INCONCLUSIVE': 'నిర్ణయించలేకపోయాము',
+  'verdict.NEEDS VERIFICATION': 'ధ్రువీకరణ అవసరం',
+  'verdict.SUSPICIOUS': 'అనుమానాస్పద',
+  'verdict.HIGH RISK': 'అధిక ప్రమాదం',
+  'verdict.LOW RISK': 'తక్కువ ప్రమాదం',
+  'risk.LOW': 'తక్కువ ప్రమాదం',
+  'risk.MEDIUM': 'మధ్యమ ప్రమాదం',
+  'risk.HIGH': 'అధిక ప్రమాదం',
+  'mic.title': 'మైక్రోఫోన్ రికార్డింగ్',
+  'mic.startRecording': 'రికార్డింగ్ ప్రారంభించు',
+  'mic.stop': 'రికార్డింగ్ ఆపు',
+  'mic.recording': 'రికార్డింగ్ జరుగుతోంది...',
+  'mic.readyToRecord': 'రికార్డ్ చేయడానికి సిద్ధం',
+  'mic.recordAgain': 'మళ్లీ రికార్డ్ చేయి',
+  'mic.analyze': 'రికార్డింగ్ విశ్లేషించు',
+  'mic.permission': 'రికార్డింగ్ ప్రారంభించడానికి మైక్రోఫోన్ అనుమతి ఇవ్వండి.',
+  'mic.denied': 'మైక్రోఫోన్ అనుమతి తిరస్కరించబడింది. బ్రౌజర్ సెట్టింగ్‌లలో అనుమతి ఇవ్వండి.',
 };
 
 const kn: Partial<TranslationMap> = {
@@ -598,6 +883,27 @@ const kn: Partial<TranslationMap> = {
   'onboarding.privacyPrefs': 'ಗೌಪ್ಯತೆ ಆದ್ಯತೆಗಳು',
   'onboarding.continue': 'ಮುಂದುವರಿಸಿ',
   'onboarding.finish': 'ಪ್ರಾರಂಭಿಸಿ',
+  'result.overallResult': 'ಒಟ್ಟಾರೆ ಫಲಿತಾಂಶ',
+  'result.aiAuthorship': 'AI ಬರವಣಿಗೆ ವಿಶ್ಲೇಷಣೆ',
+  'result.factualVerification': 'ವಾಸ್ತವ ಪರಿಶೀಲನೆ',
+  'result.whyResult': 'ಈ ಫಲಿತಾಂಶ ಏಕೆ?',
+  'verdict.INCONCLUSIVE': 'ನಿರ್ಧರಿಸಲಾಗಿಲ್ಲ',
+  'verdict.NEEDS VERIFICATION': 'ಪರಿಶೀಲನೆ ಅಗತ್ಯ',
+  'verdict.SUSPICIOUS': 'ಅನುಮಾನಾಸ್ಪದ',
+  'verdict.HIGH RISK': 'ಹೆಚ್ಚಿನ ಅಪಾಯ',
+  'verdict.LOW RISK': 'ಕಡಿಮೆ ಅಪಾಯ',
+  'risk.LOW': 'ಕಡಿಮೆ ಅಪಾಯ',
+  'risk.MEDIUM': 'ಮಧ್ಯಮ ಅಪಾಯ',
+  'risk.HIGH': 'ಹೆಚ್ಚಿನ ಅಪಾಯ',
+  'mic.title': 'ಮೈಕ್ರೋಫೋನ್ ರೆಕಾರ್ಡಿಂಗ್',
+  'mic.startRecording': 'ರೆಕಾರ್ಡಿಂಗ್ ಪ್ರಾರಂಭಿಸಿ',
+  'mic.stop': 'ರೆಕಾರ್ಡಿಂಗ್ ನಿಲ್ಲಿಸಿ',
+  'mic.recording': 'ರೆಕಾರ್ಡಿಂಗ್ ಆಗುತ್ತಿದೆ...',
+  'mic.readyToRecord': 'ರೆಕಾರ್ಡ್ ಮಾಡಲು ಸಿದ್ಧ',
+  'mic.recordAgain': 'ಮತ್ತೆ ರೆಕಾರ್ಡ್ ಮಾಡಿ',
+  'mic.analyze': 'ರೆಕಾರ್ಡಿಂಗ್ ವಿಶ್ಲೇಷಿಸಿ',
+  'mic.permission': 'ರೆಕಾರ್ಡಿಂಗ್ ಪ್ರಾರಂಭಿಸಲು ಮೈಕ್ರೋಫೋನ್ ಅನುಮತಿ ನೀಡಿ.',
+  'mic.denied': 'ಮೈಕ್ರೋಫೋನ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಅನುಮತಿ ನೀಡಿ.',
 };
 
 const ml: Partial<TranslationMap> = {

@@ -28,11 +28,11 @@ export function AudioCheckPage() {
   const handleFile = useCallback((f: File) => {
     const isValid = ACCEPTED.includes(f.type) || f.name.match(/\.(mp3|wav|m4a|ogg|webm)$/i);
     if (!isValid) {
-      setError('Unsupported file type. Please upload MP3, WAV, M4A, OGG, or WEBM.');
+      setError(t('audio.unsupported'));
       return;
     }
     if (f.size > MAX_SIZE) {
-      setError('File too large. Maximum size is 25 MB.');
+      setError(t('audio.tooLarge'));
       return;
     }
     setError('');
@@ -112,7 +112,7 @@ export function AudioCheckPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('dashboard.audioCheck')}</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Check audio for potential synthetic or manipulated speech.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t('audio.desc')}</p>
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export function AudioCheckPage() {
             <Upload size={32} className="text-white" />
           </div>
           <p className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t('audio.upload')}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">MP3, WAV, M4A, OGG, WEBM — max 25 MB</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('audio.formats')}</p>
           <span className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium">
             {t('image.browse')}
           </span>
@@ -220,7 +220,7 @@ export function AudioCheckPage() {
             disabled={analyzing}
             className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {analyzing ? 'Analyzing...' : t('audio.analyze')}
+            {analyzing ? t('common.analyzing') : t('audio.analyze')}
             <Mic size={18} />
           </button>
         </div>

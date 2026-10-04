@@ -15,19 +15,19 @@ export function LandingPage() {
   const [themeOpen, setThemeOpen] = useState(false);
 
   const checkCards = [
-    { icon: FileText, title: t('landing.what.text'), desc: 'Check messages, articles and social-media posts.', color: 'from-blue-500 to-cyan-500', path: '/app/text' },
-    { icon: Image, title: t('landing.what.image'), desc: 'Look for suspicious image manipulation or synthetic signals.', color: 'from-purple-500 to-pink-500', path: '/app/image' },
-    { icon: Mic, title: t('landing.what.audio'), desc: 'Check audio for potential synthetic or manipulated speech.', color: 'from-orange-500 to-red-500', path: '/app/audio' },
-    { icon: Camera, title: t('landing.what.camera'), desc: 'Capture an image using your camera.', color: 'from-teal-500 to-emerald-500', path: '/app/camera' },
-    { icon: Mic, title: t('landing.what.microphone'), desc: 'Record audio using your microphone.', color: 'from-rose-500 to-pink-500', path: '/app/audio' },
-    { icon: Link2, title: t('landing.what.links'), desc: 'Check supported online content.', color: 'from-indigo-500 to-blue-500', path: '/app/link' },
+    { icon: FileText, title: t('landing.what.text'), desc: t('landing.what.textDesc'), color: 'from-blue-500 to-cyan-500', path: '/app/text' },
+    { icon: Image, title: t('landing.what.image'), desc: t('landing.what.imageDesc'), color: 'from-purple-500 to-pink-500', path: '/app/image' },
+    { icon: Mic, title: t('landing.what.audio'), desc: t('landing.what.audioDesc'), color: 'from-orange-500 to-red-500', path: '/app/audio' },
+    { icon: Camera, title: t('landing.what.camera'), desc: t('landing.what.cameraDesc'), color: 'from-teal-500 to-emerald-500', path: '/app/camera' },
+    { icon: Mic, title: t('landing.what.microphone'), desc: t('landing.what.microphoneDesc'), color: 'from-rose-500 to-pink-500', path: '/app/microphone' },
+    { icon: Link2, title: t('landing.what.links'), desc: t('landing.what.linksDesc'), color: 'from-indigo-500 to-blue-500', path: '/app/link' },
   ];
 
   const steps = [
-    { icon: Upload, title: t('landing.how.step1'), desc: 'Upload a file or capture with your camera/mic' },
-    { icon: Search, title: t('landing.how.step2'), desc: 'AI checks for suspicious patterns' },
-    { icon: FileCheck, title: t('landing.how.step3'), desc: 'Review the result and confidence score' },
-    { icon: Eye, title: t('landing.how.step4'), desc: 'Verify important info independently' },
+    { icon: Upload, title: t('landing.how.step1'), desc: t('landing.how.step1Desc') },
+    { icon: Search, title: t('landing.how.step2'), desc: t('landing.how.step2Desc') },
+    { icon: FileCheck, title: t('landing.how.step3'), desc: t('landing.how.step3Desc') },
+    { icon: Eye, title: t('landing.how.step4'), desc: t('landing.how.step4Desc') },
   ];
 
   return (

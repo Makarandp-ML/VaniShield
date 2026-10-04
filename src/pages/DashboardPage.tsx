@@ -71,7 +71,7 @@ export function DashboardPage() {
     { icon: Image, title: t('dashboard.imageCheck'), desc: t('dashboard.imageCheckDesc'), color: 'from-purple-500 to-pink-500', path: '/app/image' },
     { icon: Mic, title: t('dashboard.audioCheck'), desc: t('dashboard.audioCheckDesc'), color: 'from-orange-500 to-red-500', path: '/app/audio' },
     { icon: Camera, title: t('dashboard.liveImage'), desc: t('dashboard.liveImageDesc'), color: 'from-teal-500 to-emerald-500', path: '/app/camera' },
-    { icon: Mic, title: t('dashboard.liveAudio'), desc: t('dashboard.liveAudioDesc'), color: 'from-rose-500 to-pink-500', path: '/app/audio' },
+    { icon: Mic, title: t('dashboard.liveAudio'), desc: t('dashboard.liveAudioDesc'), color: 'from-rose-500 to-pink-500', path: '/app/microphone' },
     { icon: Link2, title: t('dashboard.linkCheck'), desc: t('dashboard.linkCheckDesc'), color: 'from-indigo-500 to-blue-500', path: '/app/link' },
   ];
 
@@ -86,7 +86,7 @@ export function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">{t('dashboard.title')}</h1>
-        <p className="text-slate-500 dark:text-slate-400">Choose a check type to get started.</p>
+        <p className="text-slate-500 dark:text-slate-400">{t('dashboard.subtitle')}</p>
       </div>
 
       {/* Stats */}

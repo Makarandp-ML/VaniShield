@@ -18,7 +18,7 @@ export function LinkCheckPage() {
   const handleAnalyze = () => {
     let validUrl = url.trim();
     if (!validUrl) {
-      setError('Please enter a URL to check.');
+      setError(t('link.emptyUrl'));
       return;
     }
     if (!validUrl.match(/^https?:\/\//)) {
@@ -27,7 +27,7 @@ export function LinkCheckPage() {
     try {
       new URL(validUrl);
     } catch {
-      setError('Please enter a valid URL.');
+      setError(t('link.invalidUrl'));
       return;
     }
     setError('');
@@ -60,7 +60,7 @@ export function LinkCheckPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('dashboard.linkCheck')}</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Check supported online content.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t('link.desc')}</p>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export function LinkCheckPage() {
             disabled={analyzing || !url.trim()}
             className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {analyzing ? 'Checking...' : t('link.analyze')}
+            {analyzing ? t('common.checking') : t('link.analyze')}
             <ExternalLink size={18} />
           </button>
           {url && (
@@ -102,7 +102,7 @@ export function LinkCheckPage() {
 
       <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 text-sm">
         <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
-        <span>{t('link.restricted')} Only basic URL-level checks are performed.</span>
+        <span>{t('link.restricted')} {t('link.basicOnly')}</span>
       </div>
 
       {error && <ErrorMessage message={error} />}
