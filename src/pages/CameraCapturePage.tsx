@@ -95,7 +95,7 @@ export function CameraCapturePage() {
     startCamera();
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!capturedFile) return;
     setError('');
     setAnalyzing(true);
@@ -106,11 +106,13 @@ export function CameraCapturePage() {
       setTimeout(() => setStep(i + 1), i * 700);
     });
 
-    setTimeout(() => {
-      const r = analyzeImage(capturedFile);
+    try {
+      const r = await analyzeImage(capturedFile);
       setResult(r);
-      setAnalyzing(false);
-    }, STEPS.length * 700 + 300);
+    } catch {
+      setError('Analysis failed. Please try again.');
+    }
+    setAnalyzing(false);
   };
 
   const handleClose = () => {
@@ -160,6 +162,7 @@ export function CameraCapturePage() {
               ref={videoRef}
               autoPlay
               playsInline
+              muted
               className="w-full h-full object-cover"
             />
             <button

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Save, Share2, RotateCcw, Trash2, Info, Search, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, HelpCircle, FileText, type LucideIcon } from 'lucide-react';
+import { Save, Share2, RotateCcw, Trash2, Info, Search, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, HelpCircle, FileText, Shield, Scale, type LucideIcon } from 'lucide-react';
 import { StatusBadge, Modal } from '@/components/ui';
 import type { AnalysisResult } from '@/services/analysisService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -137,6 +137,104 @@ export function ResultCard({
           <span>{t('result.confidence')}: <strong className="text-slate-700 dark:text-slate-200">{result.confidence !== null ? `${result.confidence}%` : t('result.confidenceNotAvailable')}</strong></span>
           <span>{new Date(result.timestamp).toLocaleString()}</span>
         </div>
+      </div>
+
+      {/* Dual Verdict: Authenticity + Reality Check */}
+      {result.authenticity && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Authenticity */}
+          <div className={`rounded-2xl border p-6 ${
+            result.authenticity.verdict === 'LIKELY AI-GENERATED'
+              ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800'
+              : result.authenticity.verdict === 'LIKELY HUMAN'
+                ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+          }`}>
+            <div className="flex items-center gap-2 mb-3">
+              <Shield size={18} className={result.authenticity.verdict === 'LIKELY AI-GENERATED' ? 'text-red-500' : result.authenticity.verdict === 'LIKELY HUMAN' ? 'text-green-500' : 'text-slate-400'} />
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('result.authenticity')}</p>
+            </div>
+            <p className={`text-xl font-bold mb-3 ${
+              result.authenticity.verdict === 'LIKELY AI-GENERATED' ? 'text-red-700 dark:text-red-400' :
+              result.authenticity.verdict === 'LIKELY HUMAN' ? 'text-green-700 dark:text-green-400' :
+              'text-slate-600 dark:text-slate-300'
+            }`}>
+              {result.authenticity.verdict === 'LIKELY AI-GENERATED' ? t('result.verdictAI') :
+               result.authenticity.verdict === 'LIKELY HUMAN' ? t('result.verdictHuman') :
+               t('result.verdictInconclusive')}
+            </p>
+            {result.authenticity.verdict !== 'INCONCLUSIVE' && (
+              <div className="space-y-2 mb-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-red-600 dark:text-red-400 font-medium">{t('result.aiLikelihood')}</span>
+                  <span className="font-bold text-red-700 dark:text-red-400">{result.authenticity.aiPercent}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-600 transition-all duration-700" style={{ width: `${result.authenticity.aiPercent}%` }} />
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-green-600 dark:text-green-400 font-medium">{t('result.humanLikelihood')}</span>
+                  <span className="font-bold text-green-700 dark:text-green-400">{result.authenticity.humanPercent}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-700" style={{ width: `${result.authenticity.humanPercent}%` }} />
+                </div>
+              </div>
+            )}
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{t('result.confidenceLevel')}: <strong className="text-slate-700 dark:text-slate-200">{result.authenticity.confidence}</strong></p>
+            <ul className="space-y-1">
+              {result.authenticity.evidence.map((e, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                  <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
+                  {e}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Reality Check */}
+          {result.realityCheck && (
+            <div className={`rounded-2xl border p-6 ${
+              result.realityCheck.verdict === 'CONTRADICTION'
+                ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800'
+                : result.realityCheck.verdict === 'MISLEADING'
+                  ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800'
+                  : result.realityCheck.verdict === 'SUPPORTED'
+                    ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+                    : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+            }`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Scale size={18} className={result.realityCheck.verdict === 'CONTRADICTION' ? 'text-red-500' : result.realityCheck.verdict === 'MISLEADING' ? 'text-orange-500' : result.realityCheck.verdict === 'SUPPORTED' ? 'text-green-500' : 'text-slate-400'} />
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('result.realityCheck')}</p>
+              </div>
+              <p className={`text-xl font-bold mb-3 ${
+                result.realityCheck.verdict === 'CONTRADICTION' ? 'text-red-700 dark:text-red-400' :
+                result.realityCheck.verdict === 'MISLEADING' ? 'text-orange-700 dark:text-orange-400' :
+                result.realityCheck.verdict === 'SUPPORTED' ? 'text-green-700 dark:text-green-400' :
+                'text-slate-600 dark:text-slate-300'
+              }`}>
+                {result.realityCheck.verdict === 'CONTRADICTION' ? t('result.realityContradiction') :
+                 result.realityCheck.verdict === 'MISLEADING' ? t('result.realityMisleading') :
+                 result.realityCheck.verdict === 'SUPPORTED' ? t('result.realitySupported') :
+                 t('result.realityUnverifiable')}
+              </p>
+              <ul className="space-y-1">
+                {result.realityCheck.evidence.map((e, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                    <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
+                    {e}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Heuristic + Legal notice */}
+      <div className="flex items-start gap-2 px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
+        <Info size={14} className="flex-shrink-0 mt-0.5" />
+        <span>{t('result.heuristicNotice')} — {t('result.legalDisclaimer')}</span>
       </div>
 
       {/* Text-specific: AI Authorship + Factual Verification */}

@@ -125,6 +125,10 @@ export type TranslationKey =
   | 'landing.how.step1Desc' | 'landing.how.step2Desc' | 'landing.how.step3Desc' | 'landing.how.step4Desc'
   | 'dashboard.subtitle' | 'text.factualTest'
   | 'text.empty' | 'text.pasteError'
+  | 'result.authenticity' | 'result.realityCheck' | 'result.aiLikelihood' | 'result.humanLikelihood'
+  | 'result.verdictAI' | 'result.verdictHuman' | 'result.verdictInconclusive'
+  | 'result.realitySupported' | 'result.realityMisleading' | 'result.realityContradiction' | 'result.realityUnverifiable'
+  | 'result.heuristicNotice' | 'result.legalDisclaimer' | 'result.confidenceLevel'
 
 type TranslationMap = Record<TranslationKey, string>;
 
@@ -347,6 +351,20 @@ const en: TranslationMap = {
   'text.factualTest': 'Factual Test',
   'text.empty': 'Please enter some text to analyze.',
   'text.pasteError': 'Unable to paste. Please paste manually with Ctrl+V.',
+  'result.authenticity': 'Authenticity',
+  'result.realityCheck': 'Reality Check',
+  'result.aiLikelihood': 'AI Likelihood',
+  'result.humanLikelihood': 'Human / Authentic Likelihood',
+  'result.verdictAI': 'LIKELY AI-GENERATED',
+  'result.verdictHuman': 'LIKELY HUMAN / AUTHENTIC',
+  'result.verdictInconclusive': 'INCONCLUSIVE',
+  'result.realitySupported': 'SUPPORTED — No contradiction',
+  'result.realityMisleading': 'POTENTIALLY MISLEADING',
+  'result.realityContradiction': 'FALSE — Contradiction detected',
+  'result.realityUnverifiable': 'UNVERIFIABLE',
+  'result.heuristicNotice': 'Heuristic forensic estimate — no trained ML model was used',
+  'result.legalDisclaimer': 'Probabilistic forensic-assistance results. Requires independent verification for legal/judicial use.',
+  'result.confidenceLevel': 'Confidence Level',
   'analytics.totalChecks': 'Total Checks',
   'analytics.textChecks': 'Text Checks',
   'analytics.imageChecks': 'Image Checks',
