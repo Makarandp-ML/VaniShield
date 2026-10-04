@@ -25,7 +25,7 @@ export function TextCheckPage() {
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
-      setError('Please enter some text to analyze.');
+      setError(t('text.empty'));
       return;
     }
     setError('');
@@ -61,7 +61,7 @@ export function TextCheckPage() {
       const clipText = await navigator.clipboard.readText();
       setText(clipText);
     } catch {
-      setError('Unable to paste. Please paste manually with Ctrl+V.');
+      setError(t('text.pasteError'));
     }
   };
 

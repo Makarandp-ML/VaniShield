@@ -48,7 +48,7 @@ export function SignupPage() {
     setError('');
     setLoading(true);
     setLanguage(preferredLang);
-    const { error } = await signUp(email, password, fullName);
+    const { error } = await signUp(email, password, fullName, preferredLang);
     setLoading(false);
     if (error) {
       setError(error);

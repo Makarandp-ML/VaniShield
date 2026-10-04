@@ -122,7 +122,9 @@ export type TranslationKey =
   | 'link.desc' | 'link.enterUrl' | 'link.invalidUrl' | 'link.emptyUrl' | 'link.basicOnly'
   | 'landing.what.textDesc' | 'landing.what.imageDesc' | 'landing.what.audioDesc'
   | 'landing.what.cameraDesc' | 'landing.what.microphoneDesc' | 'landing.what.linksDesc'
+  | 'landing.how.step1Desc' | 'landing.how.step2Desc' | 'landing.how.step3Desc' | 'landing.how.step4Desc'
   | 'dashboard.subtitle' | 'text.factualTest'
+  | 'text.empty' | 'text.pasteError'
 
 type TranslationMap = Record<TranslationKey, string>;
 
@@ -343,6 +345,8 @@ const en: TranslationMap = {
   'landing.how.step4Desc': 'Verify important information',
   'dashboard.subtitle': 'Choose a check type to get started.',
   'text.factualTest': 'Factual Test',
+  'text.empty': 'Please enter some text to analyze.',
+  'text.pasteError': 'Unable to paste. Please paste manually with Ctrl+V.',
   'analytics.totalChecks': 'Total Checks',
   'analytics.textChecks': 'Text Checks',
   'analytics.imageChecks': 'Image Checks',

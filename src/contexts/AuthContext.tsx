@@ -9,7 +9,7 @@ interface AuthContextValue {
   privacy: PrivacySettings | null;
   loading: boolean;
   onboardingComplete: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, fullName: string, preferredLanguage?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
@@ -85,13 +85,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, fullName: string, preferredLanguage?: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: { data: { full_name: fullName, preferred_language: preferredLanguage || 'en' } },
     });
-    if (error) return { error: error.message };
+    if (error) {
+      if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+        return { error: 'An account with this email already exists. Please log in instead.' };
+      }
+      if (error.message.includes('Database error saving new user')) {
+        return { error: 'Unable to create your account right now. Please try again in a moment.' };
+      }
+      return { error: error.message };
+    }
     if (data.user) {
       setUser({ id: data.user.id, email: data.user.email || '' });
       await loadProfile(data.user.id);
