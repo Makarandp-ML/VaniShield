@@ -71,7 +71,7 @@ export function AudioCheckPage() {
     audioRef.current.currentTime = pct * duration;
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!file) return;
     setError('');
     setAnalyzing(true);
@@ -82,11 +82,13 @@ export function AudioCheckPage() {
       setTimeout(() => setStep(i + 1), i * 700);
     });
 
-    setTimeout(() => {
-      const r = analyzeAudio(file, duration);
+    try {
+      const r = await analyzeAudio(file, duration);
       setResult(r);
-      setAnalyzing(false);
-    }, STEPS.length * 700 + 300);
+    } catch {
+      setError('Analysis failed. Please try again.');
+    }
+    setAnalyzing(false);
   };
 
   const handleRemove = () => {

@@ -105,7 +105,7 @@ export function MicrophonePage() {
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!audioBlob) return;
     setError('');
     setAnalyzing(true);
@@ -116,12 +116,14 @@ export function MicrophonePage() {
       setTimeout(() => setStep(i + 1), i * 600);
     });
 
-    setTimeout(() => {
+    try {
       const file = new File([audioBlob], `recording-${Date.now()}.webm`, { type: audioBlob.type || 'audio/webm' });
-      const r = analyzeAudio(file, duration);
+      const r = await analyzeAudio(file, duration);
       setResult(r);
-      setAnalyzing(false);
-    }, STEPS.length * 600 + 200);
+    } catch {
+      setError('Analysis failed. Please try again.');
+    }
+    setAnalyzing(false);
   };
 
   const handleDelete = () => {

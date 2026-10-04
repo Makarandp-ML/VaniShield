@@ -55,7 +55,7 @@ export function ImageCheckPage() {
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!file) return;
     setError('');
     setAnalyzing(true);
@@ -66,11 +66,13 @@ export function ImageCheckPage() {
       setTimeout(() => setStep(i + 1), i * 700);
     });
 
-    setTimeout(() => {
-      const r = analyzeImage(file);
+    try {
+      const r = await analyzeImage(file);
       setResult(r);
-      setAnalyzing(false);
-    }, STEPS.length * 700 + 300);
+    } catch {
+      setError('Analysis failed. Please try again.');
+    }
+    setAnalyzing(false);
   };
 
   const handleRemove = () => {
@@ -88,7 +90,7 @@ export function ImageCheckPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('dashboard.imageCheck')}</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Look for suspicious image manipulation or synthetic signals.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t('image.desc')}</p>
         </div>
       </div>
 
