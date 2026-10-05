@@ -30,8 +30,21 @@ export interface AuthenticityResult {
 }
 
 export interface RealityCheckResult {
-  verdict: 'SUPPORTED' | 'MISLEADING' | 'CONTRADICTION' | 'UNVERIFIABLE';
+  verdict: 'SUPPORTED' | 'MISLEADING' | 'CONTRADICTION' | 'UNVERIFIABLE' | 'NO FACTUAL CLAIM';
   evidence: string[];
+}
+
+export interface SafetyAlert {
+  detected: boolean;
+  severity: 'HIGH' | 'MEDIUM' | 'LOW';
+  indicators: string[];
+  guidance: string[];
+}
+
+export interface PrivacyAlert {
+  detected: boolean;
+  types: string[];
+  guidance: string[];
 }
 
 export interface AnalysisResult {
@@ -56,6 +69,8 @@ export interface AnalysisResult {
   factualVerification?: FactCheckResult[];
   riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'INCONCLUSIVE';
   whyResult?: string[];
+  safetyAlert?: SafetyAlert;
+  privacyAlert?: PrivacyAlert;
   // Image-specific
   metadata?: { label: string; value: string }[];
   // Audio-specific
@@ -152,6 +167,75 @@ function checkFacts(text: string): FactCheckResult[] {
   return results;
 }
 
+// ─── SAFETY & PRIVACY DETECTION ──────────────────────────────────────────────
+
+const SAFETY_PATTERNS: Array<{ pattern: RegExp; indicator: string; severity: 'HIGH' | 'MEDIUM' | 'LOW' }> = [
+  { pattern: /\b(kill|murder|assassinate|behead|slaughter)\b/i, indicator: 'Violent threat language detected', severity: 'HIGH' },
+  { pattern: /\b(bomb|blast|explosive|attack|shoot|stab)\b/i, indicator: 'Potential violence indicator', severity: 'HIGH' },
+  { pattern: /\b(rape|sexual assault|molest|abuse|exploit)\b/i, indicator: 'Potential abuse/exploitation indicator', severity: 'HIGH' },
+  { pattern: /\b(blackmail|extort|leak.*photo|expose.*you|ruin.*reputation)\b/i, indicator: 'Possible blackmail/extortion language', severity: 'HIGH' },
+  { pattern: /\b(send|transfer|pay).*(money|cash|fund|amount|rs)\b/i, indicator: 'Potential financial fraud pattern', severity: 'HIGH' },
+  { pattern: /\b(otp|verification code|password|pin|cvv).*(send|share|provide|enter)\b/i, indicator: 'Request for sensitive credentials', severity: 'HIGH' },
+  { pattern: /\b(pretend|impersonat|fake.*account|acting as|on behalf of)\b/i, indicator: 'Possible impersonation indicator', severity: 'MEDIUM' },
+  { pattern: /\b(free.*(recharge|iphone|laptop|gift|cash|prize|winner|lottery))\b/i, indicator: 'Potential scam/fraud pattern', severity: 'MEDIUM' },
+  { pattern: /\b(click.*link|visit.*site|short.*url|bit\.ly|tinyurl)\b/i, indicator: 'Potentially malicious link', severity: 'MEDIUM' },
+  { pattern: /\b(deepfake|voice clone|fake video)\b/i, indicator: 'Deepfake-related content', severity: 'MEDIUM' },
+];
+
+function detectSafetyAlert(text: string): SafetyAlert {
+  const indicators: string[] = [];
+  let maxSeverity: 'HIGH' | 'MEDIUM' | 'LOW' = 'LOW';
+  for (const p of SAFETY_PATTERNS) {
+    if (p.pattern.test(text)) {
+      indicators.push(p.indicator);
+      if (p.severity === 'HIGH') maxSeverity = 'HIGH';
+      else if (p.severity === 'MEDIUM' && maxSeverity !== 'HIGH') maxSeverity = 'MEDIUM';
+    }
+  }
+  const detected = indicators.length > 0;
+  const guidance: string[] = [];
+  if (detected) {
+    guidance.push('This content may indicate potentially harmful activity.');
+    if (maxSeverity === 'HIGH') {
+      guidance.push('Consider preserving evidence (screenshots, messages) if needed.');
+      guidance.push('Consider reporting to the platform and appropriate authorities.');
+      guidance.push('For cybercrime in India, consider reporting at cybercrime.gov.in (National Cyber Crime Reporting Portal).');
+      guidance.push('For immediate physical danger, contact local emergency services (112 in India).');
+    } else {
+      guidance.push('Exercise caution and verify before taking any action.');
+      guidance.push('Do not share personal information or send money without verifying independently.');
+    }
+  }
+  return { detected, severity: maxSeverity, indicators, guidance };
+}
+
+const PRIVACY_PATTERNS: Array<{ pattern: RegExp; type: string }> = [
+  { pattern: /\b\d{10}\b/, type: 'Phone number' },
+  { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/, type: 'Email address' },
+  { pattern: /\b[A-Z]{5}\d{4}[A-Z]\b/, type: 'PAN card number' },
+  { pattern: /\b\d{12}\b/, type: 'Aadhaar number' },
+  { pattern: /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/, type: 'Card number' },
+  { pattern: /\b(password|passwd|pwd|otp|cvv)\b/i, type: 'Authentication information' },
+  { pattern: /\bIFSC\s?[A-Z]{4}0\d{6}\b/i, type: 'Bank IFSC code' },
+];
+
+function detectPrivacyAlert(text: string): PrivacyAlert {
+  const types: string[] = [];
+  for (const p of PRIVACY_PATTERNS) {
+    if (p.pattern.test(text)) {
+      types.push(p.type);
+    }
+  }
+  const detected = types.length > 0;
+  const guidance: string[] = [];
+  if (detected) {
+    guidance.push('Sensitive personal information was detected in this content.');
+    guidance.push('Consider removing or masking this information before sharing.');
+    guidance.push('Sharing personal information publicly may lead to identity theft, fraud, or harassment.');
+  }
+  return { detected, types, guidance };
+}
+
 // ─── TEXT ANALYSIS ───────────────────────────────────────────────────────────
 
 const AI_FORMAL_PHRASES = [
@@ -188,8 +272,8 @@ export function analyzeText(text: string, language: LanguageCode): AnalysisResul
         evidence: ['Insufficient text for authorship analysis'],
       },
       realityCheck: {
-        verdict: 'UNVERIFIABLE',
-        evidence: ['Not enough text to verify claims'],
+        verdict: 'NO FACTUAL CLAIM',
+        evidence: ['Not enough text to identify a factual claim'],
       },
       aiAuthorship: {
         status: 'INCONCLUSIVE',
@@ -204,6 +288,8 @@ export function analyzeText(text: string, language: LanguageCode): AnalysisResul
         'Both AI authorship and factual verification require more content.',
         'Therefore the result is INCONCLUSIVE.',
       ],
+      safetyAlert: detectSafetyAlert(text),
+      privacyAlert: detectPrivacyAlert(text),
     };
   }
 
@@ -378,8 +464,8 @@ export function analyzeText(text: string, language: LanguageCode): AnalysisResul
     realityEvidence.push('No factual contradictions detected against the built-in knowledge base');
     realityEvidence.push('Note: the built-in fact checker covers a limited set of common claims');
   } else {
-    realityVerdict = 'UNVERIFIABLE';
-    realityEvidence.push('Insufficient text to verify factual claims');
+    realityVerdict = 'NO FACTUAL CLAIM';
+    realityEvidence.push('No identifiable factual claim detected in this text');
   }
 
   // ─── Overall Status ────────────────────────────────────────────────────────
@@ -468,6 +554,8 @@ export function analyzeText(text: string, language: LanguageCode): AnalysisResul
     factualVerification: factResults,
     riskLevel,
     whyResult,
+    safetyAlert: detectSafetyAlert(text),
+    privacyAlert: detectPrivacyAlert(text),
   };
 }
 
@@ -602,29 +690,20 @@ export async function analyzeImage(file: File): Promise<AnalysisResult> {
   aiScore = Math.max(8, Math.min(92, Math.round(aiScore)));
   const humanScore = 100 - aiScore;
 
-  let verdict: AuthenticityResult['verdict'];
-  let confLevel: AuthenticityResult['confidence'];
-  if (aiScore >= 65) {
-    verdict = 'LIKELY AI-GENERATED';
-    confLevel = aiScore >= 80 ? 'High' : 'Medium';
-  } else if (humanScore >= 65) {
-    verdict = 'LIKELY HUMAN';
-    confLevel = humanScore >= 80 ? 'High' : 'Medium';
-  } else {
-    verdict = 'INCONCLUSIVE';
-    confLevel = 'Low';
-  }
+  // Without a trained ML image detector, we cannot reliably determine AI vs authentic
+  const verdict: AuthenticityResult['verdict'] = 'INCONCLUSIVE';
+  const confLevel: AuthenticityResult['confidence'] = 'Low';
 
   if (pixelVariance > 0) signals.push(`Pixel variance: ${pixelVariance.toFixed(1)}`);
   if (colorDiversity > 0) signals.push(`Color diversity: ${colorDiversity} unique colors`);
   if (edgeScore > 0) signals.push(`Edge ratio: ${(edgeScore * 100).toFixed(0)}%`);
   signals.push(`Dimensions: ${imgWidth}×${imgHeight}`);
-  signals.push('Heuristic forensic estimate — no trained ML detector connected');
+  signals.push('No trained AI image detector connected — content origin cannot be determined from pixel data alone');
 
   return {
-    status: verdict === 'LIKELY AI-GENERATED' ? 'LIKELY AI-GENERATED' : verdict === 'LIKELY HUMAN' ? 'LIKELY HUMAN' : 'INCONCLUSIVE',
+    status: 'INCONCLUSIVE',
     confidence: null,
-    explanation: `Authenticity: ${verdict}. AI ${aiScore}% | Authentic ${humanScore}% (heuristic forensic estimate). Based on pixel variance, color diversity, edge analysis, and file metadata.`,
+    explanation: `Content Origin: INCONCLUSIVE. No trained AI image detector is connected, so AI-generated vs authentic cannot be reliably determined from pixel data alone. Pixel variance, color diversity, and edge analysis were computed but are not sufficient for a definitive verdict.`,
     signals,
     language: 'en',
     recommendations: [
@@ -637,21 +716,21 @@ export async function analyzeImage(file: File): Promise<AnalysisResult> {
     metadata,
     authenticity: {
       verdict,
-      aiPercent: aiScore,
-      humanPercent: humanScore,
+      aiPercent: 0,
+      humanPercent: 0,
       confidence: confLevel,
       evidence: evidence.length > 0 ? evidence : ['No strong forensic signals detected in available data'],
     },
     realityCheck: {
-      verdict: 'UNVERIFIABLE',
-      evidence: ['Image content cannot be factually verified without external context', 'No reverse image search service connected'],
+      verdict: 'NO FACTUAL CLAIM',
+      evidence: ['No factual text or claim detected in this image', 'Image content cannot be factually verified without external context'],
     },
-    riskLevel: verdict === 'LIKELY AI-GENERATED' ? 'MEDIUM' : 'LOW',
+    riskLevel: 'INCONCLUSIVE',
     whyResult: [
-      `Authenticity: ${verdict} (${aiScore}% AI / ${humanScore}% authentic).`,
-      `Evidence: ${evidence.length} signal(s) analyzed from pixel data and metadata.`,
-      'This is a heuristic forensic estimate — no trained ML model was used.',
-      'Results require independent verification for legal/judicial use.',
+      'Content Origin: INCONCLUSIVE.',
+      `Pixel-level analysis was performed (${evidence.length} signal(s) from pixel variance, color diversity, and edge detection).`,
+      'However, no trained AI image detector is connected — pixel statistics alone cannot reliably distinguish AI-generated from authentic images.',
+      'Information Check: No factual claim detected in the image.',
     ],
   };
 }
@@ -775,25 +854,16 @@ export async function analyzeAudio(file: File, duration: number): Promise<Analys
   aiScore = Math.max(8, Math.min(92, Math.round(aiScore)));
   const humanScore = 100 - aiScore;
 
-  let verdict: AuthenticityResult['verdict'];
-  let confLevel: AuthenticityResult['confidence'];
-  if (aiScore >= 65) {
-    verdict = 'LIKELY AI-GENERATED';
-    confLevel = aiScore >= 80 ? 'High' : 'Medium';
-  } else if (humanScore >= 65) {
-    verdict = 'LIKELY HUMAN';
-    confLevel = humanScore >= 80 ? 'High' : 'Medium';
-  } else {
-    verdict = 'INCONCLUSIVE';
-    confLevel = 'Low';
-  }
+  // Without a trained audio anti-spoof/deepfake detector, we cannot reliably determine AI vs human
+  const verdict: AuthenticityResult['verdict'] = 'INCONCLUSIVE';
+  const confLevel: AuthenticityResult['confidence'] = 'Low';
 
-  signals.push('Heuristic forensic estimate — no trained voice AI detector connected');
+  signals.push('No trained voice AI/deepfake detector connected — content origin cannot be determined from acoustic features alone');
 
   return {
-    status: verdict === 'LIKELY AI-GENERATED' ? 'LIKELY AI-GENERATED' : verdict === 'LIKELY HUMAN' ? 'LIKELY HUMAN' : 'INCONCLUSIVE',
+    status: 'INCONCLUSIVE',
     confidence: null,
-    explanation: `Authenticity: ${verdict}. AI ${aiScore}% | Human ${humanScore}% (heuristic forensic estimate). Based on ${sampleRate > 0 ? 'spectral analysis, silence patterns, and energy metrics' : 'file metadata only'}.`,
+    explanation: `Content Origin: INCONCLUSIVE. No trained audio anti-spoof or deepfake detector is connected. Waveform, RMS, silence ratio, and frequency measurements alone cannot reliably distinguish synthetic AI voices from human voices. These metrics were computed and are shown below for reference, but they do not constitute a definitive AI/Human classification.`,
     signals,
     language: 'en',
     recommendations: [
@@ -806,21 +876,21 @@ export async function analyzeAudio(file: File, duration: number): Promise<Analys
     audioInfo,
     authenticity: {
       verdict,
-      aiPercent: aiScore,
-      humanPercent: humanScore,
+      aiPercent: 0,
+      humanPercent: 0,
       confidence: confLevel,
       evidence: evidence.length > 0 ? evidence : ['No strong forensic signals detected'],
     },
     realityCheck: {
-      verdict: 'UNVERIFIABLE',
-      evidence: ['Audio content cannot be factually verified without external context'],
+      verdict: 'NO FACTUAL CLAIM',
+      evidence: ['No factual claim detected in this audio', 'Audio content cannot be factually verified without external context'],
     },
-    riskLevel: verdict === 'LIKELY AI-GENERATED' ? 'MEDIUM' : 'LOW',
+    riskLevel: 'INCONCLUSIVE',
     whyResult: [
-      `Authenticity: ${verdict} (${aiScore}% AI / ${humanScore}% human).`,
-      `Evidence: ${evidence.length} signal(s) analyzed.`,
-      'This is a heuristic forensic estimate — no trained ML voice detector was used.',
-      'Results require independent verification for legal/judicial use.',
+      'Content Origin: INCONCLUSIVE.',
+      `Acoustic analysis was performed (${evidence.length} signal(s) from ${sampleRate > 0 ? 'spectral analysis, silence patterns, and energy metrics' : 'file metadata only'}).`,
+      'However, no trained audio anti-spoof or deepfake detector is connected — waveform, RMS, silence, and frequency measurements alone cannot reliably distinguish synthetic voices from human voices.',
+      'Information Check: No factual claim detected in the audio.',
     ],
   };
 }
@@ -899,6 +969,8 @@ export function analyzeLink(url: string): AnalysisResult {
     realityEvidence.push('No claim verification possible without inspecting page content');
   }
 
+  const safetyAlert = detectSafetyAlert(url);
+
   let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'INCONCLUSIVE';
   let status: VerdictStatus;
   const whyResult: string[] = [];
@@ -955,6 +1027,7 @@ export function analyzeLink(url: string): AnalysisResult {
     },
     riskLevel,
     whyResult,
+    safetyAlert,
   };
 }
 

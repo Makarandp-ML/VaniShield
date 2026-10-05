@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Save, Share2, RotateCcw, Trash2, Info, Search, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, HelpCircle, FileText, Shield, Scale, type LucideIcon } from 'lucide-react';
+import { Save, Share2, RotateCcw, Trash2, Info, Search, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, HelpCircle, FileText, Shield, Scale, ShieldAlert, Lock, type LucideIcon } from 'lucide-react';
 import { StatusBadge, Modal } from '@/components/ui';
 import type { AnalysisResult } from '@/services/analysisService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -139,10 +139,10 @@ export function ResultCard({
         </div>
       </div>
 
-      {/* Dual Verdict: Authenticity + Reality Check */}
+      {/* Dual Verdict: Content Origin + Information Check */}
       {result.authenticity && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Authenticity */}
+          {/* Content Origin */}
           <div className={`rounded-2xl border p-6 ${
             result.authenticity.verdict === 'LIKELY AI-GENERATED'
               ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800'
@@ -152,7 +152,7 @@ export function ResultCard({
           }`}>
             <div className="flex items-center gap-2 mb-3">
               <Shield size={18} className={result.authenticity.verdict === 'LIKELY AI-GENERATED' ? 'text-red-500' : result.authenticity.verdict === 'LIKELY HUMAN' ? 'text-green-500' : 'text-slate-400'} />
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('result.authenticity')}</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('result.contentOrigin')}</p>
             </div>
             <p className={`text-xl font-bold mb-3 ${
               result.authenticity.verdict === 'LIKELY AI-GENERATED' ? 'text-red-700 dark:text-red-400' :
@@ -182,17 +182,22 @@ export function ResultCard({
               </div>
             )}
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{t('result.confidenceLevel')}: <strong className="text-slate-700 dark:text-slate-200">{result.authenticity.confidence}</strong></p>
-            <ul className="space-y-1">
-              {result.authenticity.evidence.map((e, i) => (
-                <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
-                  <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
-                  {e}
-                </li>
-              ))}
-            </ul>
+            {result.authenticity.evidence.length > 0 && (
+              <div className="mt-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t('result.whyResult')}</p>
+                <ul className="space-y-1">
+                  {result.authenticity.evidence.map((e, i) => (
+                    <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                      <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
+                      {e}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
-          {/* Reality Check */}
+          {/* Information Check */}
           {result.realityCheck && (
             <div className={`rounded-2xl border p-6 ${
               result.realityCheck.verdict === 'CONTRADICTION'
@@ -205,7 +210,7 @@ export function ResultCard({
             }`}>
               <div className="flex items-center gap-2 mb-3">
                 <Scale size={18} className={result.realityCheck.verdict === 'CONTRADICTION' ? 'text-red-500' : result.realityCheck.verdict === 'MISLEADING' ? 'text-orange-500' : result.realityCheck.verdict === 'SUPPORTED' ? 'text-green-500' : 'text-slate-400'} />
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('result.realityCheck')}</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('result.informationCheck')}</p>
               </div>
               <p className={`text-xl font-bold mb-3 ${
                 result.realityCheck.verdict === 'CONTRADICTION' ? 'text-red-700 dark:text-red-400' :
@@ -216,18 +221,91 @@ export function ResultCard({
                 {result.realityCheck.verdict === 'CONTRADICTION' ? t('result.realityContradiction') :
                  result.realityCheck.verdict === 'MISLEADING' ? t('result.realityMisleading') :
                  result.realityCheck.verdict === 'SUPPORTED' ? t('result.realitySupported') :
+                 result.realityCheck.verdict === 'NO FACTUAL CLAIM' ? t('result.realityNoClaim') :
                  t('result.realityUnverifiable')}
               </p>
+              {result.realityCheck.evidence.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t('result.whyResult')}</p>
+                  <ul className="space-y-1">
+                    {result.realityCheck.evidence.map((e, i) => (
+                      <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                        <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
+                        {e}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Safety Alert */}
+      {result.safetyAlert?.detected && (
+        <div className="rounded-2xl border p-6 bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800">
+          <div className="flex items-center gap-2 mb-3">
+            <ShieldAlert size={20} className="text-red-500" />
+            <p className="text-sm font-bold text-red-700 dark:text-red-400">{t('result.safetyAlert')}</p>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">{t('result.whatDetected')}</p>
               <ul className="space-y-1">
-                {result.realityCheck.evidence.map((e, i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-300">
-                    <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
-                    {e}
+                {result.safetyAlert.indicators.map((ind, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-sm text-red-700 dark:text-red-300">
+                    <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+                    {ind}
                   </li>
                 ))}
               </ul>
             </div>
-          )}
+            <div>
+              <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">{t('result.safetyWhatToDo')}</p>
+              <ul className="space-y-1">
+                {result.safetyAlert.guidance.map((g, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-sm text-red-700 dark:text-red-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
+                    {g}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Alert */}
+      {result.privacyAlert?.detected && (
+        <div className="rounded-2xl border p-6 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
+          <div className="flex items-center gap-2 mb-3">
+            <Lock size={20} className="text-amber-500" />
+            <p className="text-sm font-bold text-amber-700 dark:text-amber-400">{t('result.privacyAlert')}</p>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1">{t('result.whatDetected')}</p>
+              <div className="flex flex-wrap gap-2">
+                {result.privacyAlert.types.map((tp, i) => (
+                  <span key={i} className="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium">
+                    {tp}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1">{t('result.safetyWhatToDo')}</p>
+              <ul className="space-y-1">
+                {result.privacyAlert.guidance.map((g, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-sm text-amber-700 dark:text-amber-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
+                    {g}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       )}
 
