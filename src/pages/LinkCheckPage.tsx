@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Link2, Globe, AlertCircle, ExternalLink } from 'lucide-react';
+import { Link2, Globe, AlertCircle, ExternalLink, ChevronUp, ChevronDown } from 'lucide-react';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { LoadingState, ErrorMessage } from '@/components/ui';
 import { ResultCard } from '@/components/ResultCard';
 import { analyzeLink, type AnalysisResult } from '@/services/analysisService';
+import { getLinkExamples } from '@/data/rotatingExamples';
+import { ExampleSection } from '@/components/ExampleSection';
 
 const STEPS = ['Validating URL...', 'Checking domain reputation...', 'Analyzing link patterns...', 'Generating result...'];
 
@@ -14,6 +16,12 @@ export function LinkCheckPage() {
   const [step, setStep] = useState(0);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState('');
+  const [linkExamples, setLinkExamples] = useState(() => getLinkExamples());
+  const [showExamples, setShowExamples] = useState(false);
+  const refreshExamples = () => setLinkExamples(getLinkExamples());
+  const loadExample = (index: number) => {
+    if (linkExamples[index]) setUrl(linkExamples[index].url);
+  };
 
   const handleAnalyze = () => {
     let validUrl = url.trim();
@@ -98,6 +106,26 @@ export function LinkCheckPage() {
             </button>
           )}
         </div>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <button
+          onClick={() => setShowExamples(!showExamples)}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{t('examples.title')}</span>
+          {showExamples ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showExamples && (
+          <div className="mt-4">
+            <ExampleSection
+              examples={linkExamples}
+              onNew={refreshExamples}
+              onLoadExample={loadExample}
+              loadLabel={'Load URL'}
+            />
+          </div>
+        )}
       </div>
 
       <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 text-sm">

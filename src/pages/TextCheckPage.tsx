@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FileText, Eraser, ClipboardPaste, Sparkles, Globe, AlertTriangle } from 'lucide-react';
+import { FileText, Eraser, ClipboardPaste, Sparkles, Globe, AlertTriangle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { LoadingState, ErrorMessage } from '@/components/ui';
 import { ResultCard } from '@/components/ResultCard';
-import { analyzeText, detectLanguage, EXAMPLE_TEXTS, EXAMPLE_FACTUAL_TEXT, type AnalysisResult } from '@/services/analysisService';
+import { analyzeText, detectLanguage, type AnalysisResult } from '@/services/analysisService';
 import { LANGUAGES } from '@/i18n/translations';
+import { getTextExamples } from '@/data/rotatingExamples';
+import { ExampleSection } from '@/components/ExampleSection';
 
 const STEPS = ['Reading content...', 'Detecting language...', 'Checking linguistic patterns...', 'Analyzing claims...', 'Checking contextual signals...', 'Generating explanation...'];
 
@@ -22,6 +24,13 @@ export function TextCheckPage() {
   const timerRef = useRef<number[]>([]);
 
   const isDemo = searchParams.get('demo') === 'true';
+  const [textExamples, setTextExamples] = useState(() => getTextExamples());
+  const [showExamples, setShowExamples] = useState(false);
+
+  const refreshExamples = () => setTextExamples(getTextExamples());
+  const loadExample = (index: number) => {
+    if (textExamples[index]) setText(textExamples[index].input);
+  };
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
@@ -148,6 +157,26 @@ export function TextCheckPage() {
           {analyzing ? t('common.analyzing') : t('text.analyze')}
           <FileText size={18} />
         </button>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <button
+          onClick={() => setShowExamples(!showExamples)}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{t('examples.title')}</span>
+          {showExamples ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showExamples && (
+          <div className="mt-4">
+            <ExampleSection
+              examples={textExamples}
+              onNew={refreshExamples}
+              onLoadExample={loadExample}
+              loadLabel={'Load'}
+            />
+          </div>
+        )}
       </div>
 
       {error && <ErrorMessage message={error} />}

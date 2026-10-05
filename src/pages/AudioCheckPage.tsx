@@ -1,9 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
-import { Mic, Upload, X, Play, Pause, Trash2 } from 'lucide-react';
+import { Mic, Upload, X, Play, Pause, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { LoadingState, ErrorMessage } from '@/components/ui';
 import { ResultCard } from '@/components/ResultCard';
 import { analyzeAudio, type AnalysisResult } from '@/services/analysisService';
+import { getAudioExamples } from '@/data/rotatingExamples';
+import { ExampleSection } from '@/components/ExampleSection';
 
 const STEPS = ['Preparing audio...', 'Extracting speech signals...', 'Analyzing acoustic patterns...', 'Checking synthetic-speech indicators...'];
 const ACCEPTED = ['audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/mp4', 'audio/m4a', 'audio/ogg', 'audio/webm', 'audio/x-m4a'];
@@ -22,6 +24,9 @@ export function AudioCheckPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
   const [dragOver, setDragOver] = useState(false);
+  const [audioExamples, setAudioExamples] = useState(() => getAudioExamples());
+  const [showExamples, setShowExamples] = useState(false);
+  const refreshExamples = () => setAudioExamples(getAudioExamples());
   const audioRef = useRef<HTMLAudioElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -227,6 +232,21 @@ export function AudioCheckPage() {
           </button>
         </div>
       )}
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <button
+          onClick={() => setShowExamples(!showExamples)}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{t('examples.title')}</span>
+          {showExamples ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showExamples && (
+          <div className="mt-4">
+            <ExampleSection examples={audioExamples} onNew={refreshExamples} />
+          </div>
+        )}
+      </div>
 
       {error && <ErrorMessage message={error} />}
 

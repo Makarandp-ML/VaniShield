@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { supabase } from '@/lib/supabase';
 import { StatusBadge } from '@/components/ui';
+import { DashboardTicker } from '@/components/DashboardTicker';
+import { FALLBACK_ITEMS } from '@/data/tickerData';
 
 interface Analytics {
   total: number;
@@ -88,6 +90,9 @@ export function DashboardPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">{t('dashboard.title')}</h1>
         <p className="text-slate-500 dark:text-slate-400">{t('dashboard.subtitle')}</p>
       </div>
+
+      {/* Ticker */}
+      <DashboardTicker items={FALLBACK_ITEMS} />
 
       {/* Stats */}
       {!loading && analytics && analytics.total > 0 && (

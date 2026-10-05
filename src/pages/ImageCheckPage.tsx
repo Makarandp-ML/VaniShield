@@ -1,9 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
-import { Image as ImageIcon, Upload, X, Camera as CameraIcon } from 'lucide-react';
+import { Image as ImageIcon, Upload, X, Camera as CameraIcon, ChevronUp, ChevronDown } from 'lucide-react';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { LoadingState, ErrorMessage } from '@/components/ui';
 import { ResultCard } from '@/components/ResultCard';
 import { analyzeImage, type AnalysisResult } from '@/services/analysisService';
+import { getImageExamples } from '@/data/rotatingExamples';
+import { ExampleSection } from '@/components/ExampleSection';
 
 const STEPS = ['Preparing image...', 'Inspecting available metadata...', 'Analyzing visual signals...', 'Checking synthetic-image indicators...'];
 const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
@@ -18,6 +20,9 @@ export function ImageCheckPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
+  const [imageExamples, setImageExamples] = useState(() => getImageExamples());
+  const [showExamples, setShowExamples] = useState(false);
+  const refreshExamples = () => setImageExamples(getImageExamples());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback((f: File) => {
@@ -158,6 +163,21 @@ export function ImageCheckPage() {
           </button>
         </div>
       )}
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <button
+          onClick={() => setShowExamples(!showExamples)}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{t('examples.title')}</span>
+          {showExamples ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showExamples && (
+          <div className="mt-4">
+            <ExampleSection examples={imageExamples} onNew={refreshExamples} />
+          </div>
+        )}
+      </div>
 
       {error && <ErrorMessage message={error} />}
 
