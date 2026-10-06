@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Play, Pause, Trash2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Mic, Square, Play, Pause, Trash2, RefreshCw, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { LoadingState, ErrorMessage } from '@/components/ui';
 import { ResultCard } from '@/components/ResultCard';
 import { analyzeAudio, type AnalysisResult } from '@/services/analysisService';
+import { getMicExamples } from '@/data/rotatingExamples';
+import { ExampleSection } from '@/components/ExampleSection';
 
 const STEPS = ['Preparing audio...', 'Extracting speech signals...', 'Analyzing acoustic patterns...', 'Checking synthetic-speech indicators...'];
 
@@ -19,6 +21,9 @@ export function MicrophonePage() {
   const [step, setStep] = useState(0);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [micExamples, setMicExamples] = useState(() => getMicExamples());
+  const [showExamples, setShowExamples] = useState(false);
+  const refreshExamples = () => setMicExamples(getMicExamples());
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -238,6 +243,21 @@ export function MicrophonePage() {
           </div>
         </div>
       )}
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <button
+          onClick={() => setShowExamples(!showExamples)}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{t('examples.title')}</span>
+          {showExamples ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showExamples && (
+          <div className="mt-4">
+            <ExampleSection examples={micExamples} onNew={refreshExamples} />
+          </div>
+        )}
+      </div>
 
       {error && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">

@@ -1,9 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Camera as CameraIcon, RefreshCw, X, AlertCircle } from 'lucide-react';
+import { Camera as CameraIcon, RefreshCw, X, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useThemeLang } from '@/contexts/ThemeLangContext';
 import { LoadingState, ErrorMessage } from '@/components/ui';
 import { ResultCard } from '@/components/ResultCard';
 import { analyzeImage, type AnalysisResult } from '@/services/analysisService';
+import { getCameraExamples } from '@/data/rotatingExamples';
+import { ExampleSection } from '@/components/ExampleSection';
 
 const STEPS = ['Preparing image...', 'Inspecting available metadata...', 'Analyzing visual signals...', 'Checking synthetic-image indicators...'];
 
@@ -17,6 +19,9 @@ export function CameraCapturePage() {
   const [step, setStep] = useState(0);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [cameraExamples, setCameraExamples] = useState(() => getCameraExamples());
+  const [showExamples, setShowExamples] = useState(false);
+  const refreshExamples = () => setCameraExamples(getCameraExamples());
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -208,6 +213,21 @@ export function CameraCapturePage() {
       )}
 
       <canvas ref={canvasRef} className="hidden" />
+
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <button
+          onClick={() => setShowExamples(!showExamples)}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{t('examples.title')}</span>
+          {showExamples ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showExamples && (
+          <div className="mt-4">
+            <ExampleSection examples={cameraExamples} onNew={refreshExamples} />
+          </div>
+        )}
+      </div>
 
       {error && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
